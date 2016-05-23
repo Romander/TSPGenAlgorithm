@@ -7,6 +7,7 @@ namespace somethink
 {
     class Individ : IComparable<Individ>
     {
+        // :alien:
         public List<Point> Points;
         public double Cost;
 
@@ -16,7 +17,11 @@ namespace somethink
             Points.AddRange(points);
             DistanceOfWay(points);
         }
-
+        public Individ(Individ individ)
+        {
+            Points = new List<Point>(individ.Points);
+            DistanceOfWay(Points);
+        }
         public Individ(List<Point> man, List<Point> woman)
         {
             Points = new List<Point>();
@@ -34,7 +39,7 @@ namespace somethink
             DistanceOfWay(Points);
         }
 
-        private void DistanceOfWay(List<Point> points)
+        public void DistanceOfWay(List<Point> points)
         {
             var sum = 0.0;
             for (var i = 0; i < points.Count - 1; i++)
@@ -44,45 +49,23 @@ namespace somethink
             sum += Distance(points[points.Count - 1], points[0]);
             Cost = sum;
         }
-
         private double Distance(Point firstPoint, Point secondPoint)
         {
             return Math.Sqrt((firstPoint.X - secondPoint.X) * (firstPoint.X - secondPoint.X) + (firstPoint.Y - secondPoint.Y) * (firstPoint.Y - secondPoint.Y));
-        }
-
-        public void Mutation(int percentOfMutation)
-        {
-            int numbersOfMuteted = Points.Count / 2 * percentOfMutation / 100;
-            Random rnd = new Random();
-            for (var i = 0; i < numbersOfMuteted; i++)
-            {
-                var firstRand = rnd.Next(0, Points.Count);
-                var secondRand = rnd.Next(0, Points.Count);
-
-                Point tmp = Points[firstRand];
-                Points[firstRand] = Points[secondRand];
-                Points[secondRand] = tmp;
-            }
-            Points = new List<Point>();
-            Points.AddRange(Points);
-            DistanceOfWay(Points);
-        }
-
-        public override string ToString()
-        {
-            return Points.Aggregate("", (current, point) => current + ("|" + point.X + "," + point.Y + "|  "));
         }
 
         public int CompareTo(Individ other)
         {
             return Cost.CompareTo(other.Cost);
         }
-
+        public override string ToString()
+        {
+            return Points.Aggregate("", (current, point) => current + ("|" + point.X + "," + point.Y + "|  "));
+        }
         public static bool operator >(Individ a, Individ b)
         {
             return (a.Cost > b.Cost);
         }
-
         public static bool operator <(Individ a, Individ b)
         {
             return (a.Cost < b.Cost);

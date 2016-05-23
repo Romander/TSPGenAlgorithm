@@ -13,10 +13,15 @@
         <Canvas Grid.Row="0"  Name="MainCanvas" MouseLeftButtonDown="MainCanvas_OnMouseLeftButtonDown" MouseRightButtonDown="MainCanvas_OnMouseRightButtonDown" Background="AliceBlue"/>
 
         <StatusBar  Grid.Row="1">
+            <TextBlock>Mutation Percent:</TextBlock>
+            <Slider  Name="percentMutation" Width="100"  Minimum ="0" Maximum="100" ToolTip="Mutation Percent"/>
+            <TextBlock>Individs Count:</TextBlock>
+            <TextBox Name="IndividsCount">100</TextBox>
+            <TextBlock>Generations Count</TextBlock>
+            <TextBox Name="GenerationsCount">10</TextBox>
             <Button Name="Refresh" Click="Refresh_OnClick">
-                <TextBlock>Refresh</TextBlock>
+                <TextBlock>Refresh map</TextBlock>
             </Button>
-            <Slider  Name="percentMutation" Width="100"  Minimum ="0" Maximum="100"/>
         </StatusBar>
     </Grid>
 </Window>

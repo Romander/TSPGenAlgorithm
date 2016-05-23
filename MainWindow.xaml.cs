@@ -108,7 +108,9 @@ namespace somethink
             MainCanvas.Children.Clear();
             DrawLines(_vertexes.ToArray(), Brushes.Gray, 0.5);
             DrawVertexes(_vertexes.ToArray());
-            _vertexes = GenAlgorithm().Points;
+            List<Individ> pop = GeneratePopulation();
+
+            _vertexes = GetBestFromGenerations(pop).Points;
             DrawWay(_vertexes.ToArray(), Brushes.Red, 2);
         }
 
@@ -179,41 +181,59 @@ namespace somethink
             ellipse.Fill = blueBrush;
         }
 
-        private Individ GenAlgorithm()
+        private List<Individ> GeneratePopulation()
         {
-            List<Individ> populations = new List<Individ>();
+            var population = new List<Individ>();
             var n = 0;
-            while (n != 100)
+            while (n != int.Parse(IndividsCount.Text))
             {
                 Shuffle(_vertexes);
-                populations.Add(new Individ(_vertexes));
+                population.Add(new Individ(_vertexes));
                 n++;
             }
-            populations.Sort();
-            populations.RemoveRange(populations.Count / 2, populations.Count / 2);   
-            
-            n = 0;
-            while (n != 5)
+            population.Sort();
+            population.RemoveRange(population.Count / 2, population.Count / 2);
+            return population;
+        }
+        private Individ GetBestFromGenerations(List<Individ> population)
+        {
+            var n = 0;
+            while (n != int.Parse(GenerationsCount.Text))
             {
                 var mutPop = new List<Individ>();
-                mutPop.AddRange(populations);
-
-                foreach (var e in mutPop)
+                foreach (var var in population)
                 {
-                    e.Mutation((int)percentMutation.Value);
+                    mutPop.Add(new Individ(var));
                 }
 
-                populations.AddRange(mutPop);
-                populations.Sort();
-                populations.RemoveRange(populations.Count / 2, populations.Count / 2);
-                Debug.WriteLine(populations.Count);  
-                Debug.WriteLine(populations[0].Cost);
+                mutPop = mutPop.Select(i => Mutation(i, (int)percentMutation.Value)).ToList();
+
+                population.AddRange(mutPop);
+                population.Sort();
+                population.RemoveRange(population.Count / 2, population.Count / 2);
+                Debug.WriteLine(population[0].Cost);
                 n++;
             }
-            Debug.WriteLine(populations.Count);  
-            return populations[0];
+            Debug.WriteLine(population.Count);  
+            return population[0];
         }
 
+        private Individ Mutation(Individ individ, int percentOfMutation)
+        {
+            int numbersOfMuteted = individ.Points.Count*percentOfMutation/100;
+            Random rnd = new Random();
+            for (var i = 0; i < numbersOfMuteted; i++)
+            {
+                var firstRand = rnd.Next(0, individ.Points.Count - 1);
+                var secondRand = rnd.Next(0, individ.Points.Count - 1);
+
+                Point tmp = individ.Points[firstRand];
+                individ.Points[firstRand] = individ.Points[secondRand];
+                individ.Points[secondRand] = tmp;
+            }
+            return new Individ(individ.Points);
+
+        }
         private static readonly Random Rng = new Random();
         public void Shuffle(List<Point> list)
         {
@@ -228,4 +248,5 @@ namespace somethink
             }
         }
     }
+
 }
