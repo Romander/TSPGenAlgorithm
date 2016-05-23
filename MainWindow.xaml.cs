@@ -26,7 +26,7 @@ namespace somethink
             var mousePosition = e.GetPosition(this);
             WriteVertexToFile(mousePosition);
             MainCanvas.Children.Add(CreateEllipse(10, 10, mousePosition.X, mousePosition.Y));
-            ReadVertexesToFile();
+            _vertexes.Add(mousePosition);
             PaintBasis();
         }
         private void MainCanvas_OnMouseRightButtonDown(object sender, MouseButtonEventArgs e)
